@@ -1,0 +1,11 @@
+1.0 first release
+1.1
+	+ Added exclude_files.lst
+	+ Added removing of old backups by lifetime variable
+1.2
+	+ Added backuping of kernel, packages lists
+	+ Added rsync ability of backups from local machine to remote
+1.3
+	+ Unified version
+1.4
+	+ rsync exclude file
