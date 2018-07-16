@@ -8,10 +8,10 @@ FTP_PORT=21
 # try to create the lock and check the outcome
 LOCKFILE=/var/run/pgsqlbackup.lock
 if [ -e "$LOCKFILE" ]; then
-        echo "Another instance already running. Aborting."
-        exit 1
+	echo "Another instance already running. Aborting."
+	exit 1
 else
-        touch "$LOCKFILE"
+	touch "$LOCKFILE"
 fi
 trap "rm ${LOCKFILE}" EXIT
 
@@ -20,7 +20,7 @@ trap "rm ${LOCKFILE}" EXIT
 
 # Backup Spacewalk Postgres DB
 for i in $DBS; do
-    su - postgres -c "pg_dump $i | gzip > $BACKUPDIR/postgres_backup-`hostname`-$i-`date +%Y%m%d`.sql.gz"
+	su - postgres -c "pg_dump $i | gzip > $BACKUPDIR/postgres_backup-`hostname`-$i-`date +%Y%m%d`.sql.gz"
 done
 
 find $BACKUPDIR -maxdepth 1 -mtime +31 -exec rm -rv {} \;
@@ -31,6 +31,6 @@ lftp -u $FTP_USERPASS -p $FTP_PORT -e 'mirror -R .;exit' $FTP_URI
 
 DAY=`date +%u`
 if [ "$DAY" = "7" ]; then
-    echo "Backup list:" 2>&1
-    lftp -u $FTP_USERPASS -p $FTP_PORT -e 'ls' $FTP_URI 2>&1
+	echo "Backup list:" 2>&1
+	lftp -u $FTP_USERPASS -p $FTP_PORT -e 'ls' $FTP_URI 2>&1
 fi
