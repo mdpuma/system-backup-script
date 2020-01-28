@@ -16,14 +16,14 @@ function backup_files() {
 		CONFIG=$(echo $CONFIG | sed -E 's/(^| )\//\1/g')
 		
 		rm -f $BACKUP_DEST/data/data_diff* $BACKUP_DEST/config/config_diff*
-		tar -c -C / -f "$BACKUP_DEST/data/data_full_$dateformat.tar.gz" --preserve-permissions --gzip --exclude-from="$EXCLUDE_LIST" $DATA 
-		tar -c -C / -f "$BACKUP_DEST/config/config_full_$dateformat.tar.gz" --preserve-permissions --gzip --exclude-from="$EXCLUDE_LIST" $CONFIG
+		tar -c -C / --exclude-from "$EXCLUDE_LIST" -f "$BACKUP_DEST/data/data_full_$dateformat.tar.gz" --preserve-permissions --gzip $DATA 
+		tar -c -C / --exclude-from "$EXCLUDE_LIST" -f "$BACKUP_DEST/config/config_full_$dateformat.tar.gz" --preserve-permissions --gzip $CONFIG
 	else
 		find $DATA -type f \( -ctime -1 -o -mtime -1 \) -print | sed -e 's/^\///' > $backup_list_file
-		tar -c -C / -f "$BACKUP_DEST/data/data_diff_$dateformat.tar.gz" --preserve-permissions --gzip --files-from="$backup_list_file" --exclude-from="$EXCLUDE_LIST"
+		tar -c -C / --exclude-from "$EXCLUDE_LIST" -f "$BACKUP_DEST/data/data_diff_$dateformat.tar.gz" --preserve-permissions --gzip --files-from="$backup_list_file" 
 		
 		find $CONFIG -type f \( -ctime -1 -o -mtime -1 \) -print | sed -e 's/^\///' > $backup_list_file
-		tar -c -C / -f "$BACKUP_DEST/config/config_diff_$dateformat.tar.gz" --preserve-permissions --gzip --files-from="$backup_list_file" --exclude-from="$EXCLUDE_LIST"
+		tar -c -C / --exclude-from "$EXCLUDE_LIST" -f "$BACKUP_DEST/config/config_diff_$dateformat.tar.gz" --preserve-permissions --gzip --files-from="$backup_list_file" 
 		
 		rm -f "$backup_list_file"
 	fi
