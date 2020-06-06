@@ -1,9 +1,10 @@
 #!/bin/bash -e
 BACKUPDIR=/var/lib/pgsql/backups/
 DBS="db1 template1"
-FTP_URI=ftp://backup/pgsql
-FTP_USERPASS=ftplogin,ftppass
-FTP_PORT=21
+FTP_URI=ftp://backup
+FTP_PATH=/path
+FTP_USERPASS="ftplogin ftppass"
+INITIAL_FTP_COMMAND="ssl:verify-certificate false; set ftp:ssl-allow false; connect $FTP_URI; login $FTP_USERPASS; cd $FTP_PATH"
 
 # try to create the lock and check the outcome
 LOCKFILE=/var/run/pgsqlbackup.lock
@@ -27,10 +28,10 @@ find $BACKUPDIR -maxdepth 1 -mtime +31 -exec rm -rv {} \;
 
 # Rsync Backups
 cd $BACKUPDIR
-lftp -u $FTP_USERPASS -p $FTP_PORT -e 'mirror -R .;exit' $FTP_URI
+lftp -e "$INITIAL_FTP_COMMAND; mirror -R .;exit"
 
 DAY=`date +%u`
 if [ "$DAY" = "7" ]; then
 	echo "Backup list:" 2>&1
-	lftp -u $FTP_USERPASS -p $FTP_PORT -e 'ls' $FTP_URI 2>&1
+	lftp -e "$INITIAL_FTP_COMMAND; ls" 2>&1
 fi
